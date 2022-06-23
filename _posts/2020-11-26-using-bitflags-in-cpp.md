@@ -6,7 +6,7 @@ date:   2020-11-26 22:57:00 +0200
 ## An Introduction to Bit Flags
 Bit flags are a programming technique to represent multiple boolean values or multiple states into a single integer. The amount of different states you can store inside of one integer depends on it’s memory size e.g. a 32 bit integer could hold 32 different states at once, one bit to represent each state.
 
-If you are not familiar with binary notation or bitwise operators I recommend you <a href="https://dietertack.medium.com/bitwise-operators-c-746a6cdf90e6" target="_blank">read this article first</a>
+If you are not familiar with binary notation or bitwise operators I recommend you <a href="https://tackytortoise.github.io/2020/11/26/bitwise-operators-in-cpp.html" target="_blank">read this article first</a>
 
 
 ## Setting Up Bit Flags Values/States
