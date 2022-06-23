@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Using bit flags in c++"
+title:  "Bitwise Operators in C++"
 date:   2020-11-26 22:50:00 +0200
 ---
 
