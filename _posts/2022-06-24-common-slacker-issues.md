@@ -245,7 +245,7 @@ To disable unity build and be sure you always notice missing includes, you just 
 ```csharp
 bUseUnity = false;
 ```
-> Note: For engine versions older than 4.24, this setting is called `bFasterWithoutUnity` and shoul be set to `true`.
+> Note: For engine versions older than 4.24, this setting is called `bFasterWithoutUnity` and should be set to `true`.
 
 Alternatively, you can set the following setting in your \<projectname\>.Target.cs file (normally found in the project's `Source` folder):
 ```csharp
