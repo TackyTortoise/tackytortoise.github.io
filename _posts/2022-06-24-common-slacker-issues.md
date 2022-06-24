@@ -93,6 +93,7 @@ error LNK2019: unresolved external symbol "__declspec(dllimport) public: static 
 ```
 This error indicates that you are trying to access something that the linker is unable to find the symbols for.  
 
+This can be caused by a few different reasons, described below:
 #### Missing dependency
 The most common cause of this within unreal is missing a module dependency.
 
