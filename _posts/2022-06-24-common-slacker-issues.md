@@ -5,7 +5,7 @@ date:   2022-06-24 17:07:00 +0200
 ---
 
 As you might know if you got to this page, I am quite an active member on the <a href="https://discord.gg/unreal-slackers" target="_blank">Unreal Slackers</a> discord.
-Over time I noticed a lot of the same issues kept popping up, so I decided to write something down to save myself some typing time.
+Over time I noticed a lot of the same issues kept popping up, so I decided to write something down to save myself some typing time (hopefully).
 
 # Table of Contents
 1. [Hot Reload](#hot-reload)
@@ -19,8 +19,10 @@ Over time I noticed a lot of the same issues kept popping up, so I decided to wr
 9. [Learning Resources](#learning-resources)
 
 ## Hot Reload
-If you are compiling your code, but your blueprint or in game behaviour does not seem to be updated to your newest code, this might be because of hot reloading.<br>
+If you are compiling your code, but your blueprint or in game behaviour does not seem to be updated to your newest code, this might be because of hot reloading.  
 If your actor hierarchy seems to randomly be completely wrong/broken, this might be because of hot reload.
+
+Basically hot reloading can corrupt your whole project if you're not careful.
 
 Hot reloading occurs when you are compiling with the editor open.  
 This could be triggered by pressing the compile button in the editor, or even by compiling in your IDE while the editor is open in the background.
@@ -39,7 +41,7 @@ Exception thrown: read access violation.
 'X' was 0x00000018.
 ```
 As the error says, this indicates an access violation. Which means that you are trying to access memory that is unreadable/invalid.  
-The most common case for this is that your program is trying to access a `nullptr`. The error indicates this by showing a memory address that is close to zero, in this case `0x00000018`. Of course the memory at this address does not contain the data you want. (if the memory address does not seem close to zero at all, you might be encountering a [Garbage Collector Cras](#garbage-collector-crash))
+The most common case for this is that your program is trying to access a `nullptr`. The error indicates this by showing a memory address that is close to zero, in this case `0x00000018`. Of course the memory at this address does not contain the data you want. (if the memory address does not seem close to zero at all, you might be encountering a [Garbage Collector Crash](#garbage-collector-crash))
 
 This could for example occur on the following code (simple example):
 ```cpp
@@ -56,7 +58,7 @@ if (PlayerController != nullptr)
     PlayerController->SetViewTarget(this);
 ```
 This would avoid the crash, but this would also not call `SetViewTarget` and we wouldn't know about it without closer inspection.  
-Often times it is actually good practice to not explicitly check for nullptr in your code, because you want to crash early and often to find the root cause of issues in your games (<a href="https://factorio.com/blog/post/fff-296" target="_blank">see Factorio case study</a>). Only do a check for nullptr if your game can function normally even if the object is invalid.
+Often times it is actually good practice to not explicitly check for nullptr in your code, because you want to crash early and often to find the root cause of issues in your games (<a href="https://factorio.com/blog/post/fff-296" target="_blank">see Factorio case study</a>). Only do a conditional check for nullptr if your game can function normally even if the object is invalid.
 
 If you want to be sure to notice when something is nullptr before calling any functions use one of the <a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/ProgrammingWithCPP/Assertions/" target="_blank">unreal assertions</a>.  
 For example:
@@ -65,19 +67,19 @@ APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 ensure(PlayerController != nullptr);
 PlayerController->SetViewTarget(this);
 ```
-This code will hit a breakpoint on the ensure if `PlayerController` is a nullptr in this case. But since you checked for this specifically, you quickly know something went wrong in getting the player controller specifically, in stead of for example something going wrong inside the `SetViewTarget()`.
+This code will hit a breakpoint on the ensure if `PlayerController` is a nullptr in this case. But since you checked for this specifically, you quickly know something went wrong in getting the player controller specifically, instead of for example something going wrong inside the `SetViewTarget()`.
 
-**Always** fix the root cause of the access violation, don't add a check and ignore.
+**Always** fix the root cause of the access violation, don't add an if check and ignore the problem.
 
 ## Unresolved External
 During compilation an unresolved external linker error might pop up, something that looks like the following:
 ```
 error LNK2019: unresolved external symbol "__declspec(dllimport) public: static class UClass * __cdecl UUserWidget::StaticClass(void)" (__imp_?StaticClass@UUserWidget@@SAPEAVUClass@@XZ) referenced in function "class UUserWidget * __cdecl NewObject<class UUserWidget>(class UObject *)" (??$NewObject@VUUserWidget@@@@YAPEAVUUserWidget@@PEAVUObject@@@Z)
 ```
-This error indicates that you are trying to access something that the compiler is unable to find the symbols for.  
+This error indicates that you are trying to access something that the linker is unable to find the symbols for.  
 The most common cause of this within unreal is missing a module dependency.
 
-In the case of the example error above, we can see that is complaining about something related to the UUserWidget class. So, we google for the <a href="https://docs.unrealengine.com/4.27/en-US/API/Runtime/UMG/Blueprint/UUserWidget/" target="_blank">documentation page of this class</a>, where we land on this:
+In the case of the example error above, we can see that is complaining about something related to the `UUserWidget` class. So, we google for the <a href="https://docs.unrealengine.com/4.27/en-US/API/Runtime/UMG/Blueprint/UUserWidget/" target="_blank">documentation page of this class</a>, where we land on this:
 {:refdef: style="text-align: center;"}
 ![Documentation module](/assets/commonissues/documentation_module.png)
 {: refdef}
@@ -95,7 +97,7 @@ During compilation of your project you could encounter an error mentioning use o
 error C2027: use of undefined type 'UUserWidget'
 ```
 What this means is that the compiler has no idea that, `UUserWidget` in this case, is a type, and what that type would look like.  
-To do this we need to tell the compiler that this is actually a class that we are dealing with and what it's memory layout is like before using it.
+To do this we need to tell the compiler that this is actually a class that we are dealing with and what it's memory layout is like before using it.  
 This can be achieved by simply adding the include for this type on top of you file.
 
 One way to find the correct include file is to google for the documentation page. In this example <a href="https://docs.unrealengine.com/4.27/en-US/API/Runtime/UMG/Blueprint/UUserWidget/" target="_blank">this page</a>.  
@@ -107,7 +109,7 @@ So to resolve the issue in this case, we would add `#include "Blueprint/UserWidg
 
 **However**, it is important to note that when encountering this issue in header files, forward declaring is a better solution.  
 With forward declaring, we can avoid circular dependencies and improve compile times.
-> Note: forward declaration only works if the size of the class does not need to be know, e.g. when using pointers
+> Note: forward declaration only works if the size of the class does not need to be know, e.g. when using pointers.
 
 So, let's say we have a `UUserWidget* MyWidget` property in our header, and are getting an undefined type error, we could forward declare this by adding the following to the top of our class (after includes):
 ```
@@ -115,7 +117,7 @@ class UUserWidget;
 ```
 This informs the compiler that `UUserWidget` is in fact a type, and as long as the size of it or the memory layout does not need to be known, this is enough.
 
-In most cases it suffices to do forward declaration in the header, and then when actualy using the property in your .cpp file, you add the include on top of that file instead of in the header.
+In most cases it suffices to do forward declaration in the header, and then when actualy using the property in your `.cpp` file, you add the include on top of that file instead of in the header.
 
 ## Garbage Collector Crash
 If you are encountering crashes at seemingly random times, it might be that you are encountering a garbage collection (GC) issue.  
@@ -126,7 +128,7 @@ E.g. if you have a member variable as follows:
 ```cpp
 UCameraComponent* CamComponent;
 ```
-And you assign to it a component using `CreateDefaultSubobject`, the garbage collector does not know that you are interested in keeping this object alive. So, on the next GC cycle, it will destroy this object without letting you know. The next time you try to access `CamComponent` you will encounter an [access violation](#access-violation), but with a seemingly random memory address (not close to 0).
+And you assign to it a component using `CreateDefaultSubobject`, the garbage collector does not know that you are interested in keeping this object alive. So, on the next GC cycle, it will destroy this object without letting you know, causing `CamComponent` to become a dangling pointer. The next time you try to access `CamComponent` you will encounter an [access violation](#access-violation), but with a seemingly random memory address (not close to zero).
 
 To fix this issue we simply update the propert in our header as follow:
 ```cpp
@@ -146,7 +148,7 @@ PrimaryActorTick.bCanEverTick = true;
 PrimaryActorTick.bStartWithTickEnabled = true;
 ```
 
-If this is done and your actor is still not ticking, it might be that you have overridden the `BeginPlay` in your class but forgot to call `Super::BeginPlay()`. Always do this:
+Second, if this is done and your actor is still not ticking, it might be that you have overridden the `BeginPlay` in your class but forgot to call `Super::BeginPlay()`. Always do this:
 ```cpp
 void AMyActor::BeginPlay()
 {
@@ -178,7 +180,7 @@ ntdll
 you are probably missing debug symbols.
 
 Debug symbols allow you to get a correct callstack for engine code, so you can exactly know where things went wrong.  
-You can install these through the epic games launcher, when modifying your engine install. To do this go to `options` of the engine version you want the symbols for:
+You can install these through the epic games launcher, when modifying your engine install. To do this go to the `Options` of the engine version you want the symbols for:
 {:refdef: style="text-align: center;"}
 ![Engine options](/assets/commonissues/engine_options.png)
 {: refdef}
@@ -191,7 +193,7 @@ This will start installing debug symbols for UE. Once this is done, rerun your p
 
 
 ## Unity Build
-By default, unreal has a feature enabled that is called "unity build". This has nothing to do with the "game engine" Unity.  
+By default, unreal has a feature enabled that is called "unity build". This has nothing to do with the *game engine* Unity.  
 Unity build basically means that unreal packs a bunch of your files together in one compilation unit for improved compile times on large projects. However, for most projects, disabling this is actually faster.  
 Moreover, if unity build is enabled the compiler might actually hide errors regarding missing includes, since all these files are batched together, if you have an include in one file, they all "contain" it. When the unity build decides to change the batching up a bit this might give seemingly random sudden [undefined type](#undefined-type) errors.
 
@@ -209,8 +211,8 @@ If you are looking for a free resource about basic c++ check out <a href="https:
 For a more complete view, it might be more interesting to check out a few books, you can find a great listing of c++ books going from beginner to advanced <a href="https://stackoverflow.com/questions/388242/the-definitive-c-book-guide-and-list" target="_blank">here</a>.  
 Some of these books can be found on Google Books, other can be bought, found in your local library, or obtained in alternative ways.
 
-Once you are making the step to go to unreal, it might be a good idea to play around with blueprints a bit to get more familiar with the API of the engine.  
-If you feel you are ready to take on c++ in Unreal Engine be sure to check out <a href="https://learn.unrealengine.com/course/3441566" target="_blank">this starter course</a>.  
+Once you are making the step to go over to unreal, it might be a good idea to play around with blueprints a bit to get more familiar with the API of the engine.  
+If you feel you are ready to take on c++ in Unreal Engine be sure to check out <a href="https://learn.unrealengine.com/course/3441566" target="_blank">this starter course</a>.
 Contrary to what this title suggests, this is useful for learning the unreal way of doing c++, regardless if you're coming from blueprints or not.
 
 Another interesting source to check out is the official documentation page for <a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/ProgrammingWithCPP/IntroductionToCPP/" target="_blank">Introduction to C++ Programming in UE4<a>.
