@@ -19,16 +19,16 @@ Over time I noticed a lot of the same issues kept popping up, so I decided to wr
 9. [Unity Build](#unity-build)
 
 ## Learning Resources
-If you are just getting started with c++ and don't really have an idea what you are doing, it is probably a good idea to learn the basics of c++ first before diving into unreal code.
+If you are just getting started with C++ and don't really have an idea what you are doing, it is probably a good idea to learn the basics of C++ first before diving into unreal code.
 
-If you are looking for a free resource about basic c++ check out <a href="https://www.learncpp.com/" target="_blank">learncpp.com</a>.
+If you are looking for a free resource about basic C++ check out <a href="https://www.learncpp.com/" target="_blank">learncpp.com</a>.
 
-For a more complete view, it might be more interesting to check out a few books, you can find a great listing of c++ books going from beginner to advanced <a href="https://stackoverflow.com/questions/388242/the-definitive-c-book-guide-and-list" target="_blank">here</a>.  
+For a more complete view, it might be more interesting to check out a few books, you can find a great listing of C++ books going from beginner to advanced <a href="https://stackoverflow.com/questions/388242/the-definitive-c-book-guide-and-list" target="_blank">here</a>.  
 Some of these books can be found on Google Books, other can be bought, found in your local library, or obtained in alternative ways.
 
 Once you are making the step to go over to unreal, it might be a good idea to play around with blueprints a bit to get more familiar with the API of the engine.  
-If you feel you are ready to take on c++ in Unreal Engine be sure to check out <a href="https://learn.unrealengine.com/course/3441566" target="_blank">this starter course</a>.
-Contrary to what this title suggests, this is useful for learning the unreal way of doing c++, regardless if you're coming from blueprints or not.
+If you feel you are ready to take on C++ in Unreal Engine be sure to check out <a href="https://learn.unrealengine.com/course/3441566" target="_blank">this starter course</a>.
+Contrary to what this title suggests, this is useful for learning the unreal way of doing C++, regardless if you're coming from blueprints or not.
 
 Another interesting source to check out is the official documentation page for <a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/ProgrammingWithCPP/IntroductionToCPP/" target="_blank">Introduction to C++ Programming in UE4<a>.
 
