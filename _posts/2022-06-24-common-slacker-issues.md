@@ -8,15 +8,30 @@ As you might know if you got to this page, I am quite an active member on the <a
 Over time I noticed a lot of the same issues kept popping up, so I decided to write something down to save myself some typing time (hopefully).
 
 # Table of Contents
-1. [Hot Reload](#hot-reload)
-2. [Access Violation](#access-violation)
-3. [Unresolved External](#unresolved-external)
-4. [Undefined Type](#undefined-type)
-5. [Garbage Collector Crash](#garbage-collector-crash)
-6. [Tick not being called](#tick-not-being-called)
-7. [Editor Symbols](#editor-symbols)
-8. [Unity Build](#unity-build)
-9. [Learning Resources](#learning-resources)
+1. [Learning Resources](#learning-resources)
+2. [Hot Reload](#hot-reload)
+3. [Access Violation](#access-violation)
+4. [Unresolved External](#unresolved-external)
+5. [Undefined Type](#undefined-type)
+6. [Garbage Collector Crash](#garbage-collector-crash)
+7. [Tick not being called](#tick-not-being-called)
+8. [Editor Symbols](#editor-symbols)
+9. [Unity Build](#unity-build)
+
+## Learning Resources
+If you are just getting started with c++ and don't really have an idea what you are doing, it is probably a good idea to learn the basics of c++ first before diving into unreal code.
+
+If you are looking for a free resource about basic c++ check out <a href="https://www.learncpp.com/" target="_blank">learncpp.com</a>.
+
+For a more complete view, it might be more interesting to check out a few books, you can find a great listing of c++ books going from beginner to advanced <a href="https://stackoverflow.com/questions/388242/the-definitive-c-book-guide-and-list" target="_blank">here</a>.  
+Some of these books can be found on Google Books, other can be bought, found in your local library, or obtained in alternative ways.
+
+Once you are making the step to go over to unreal, it might be a good idea to play around with blueprints a bit to get more familiar with the API of the engine.  
+If you feel you are ready to take on c++ in Unreal Engine be sure to check out <a href="https://learn.unrealengine.com/course/3441566" target="_blank">this starter course</a>.
+Contrary to what this title suggests, this is useful for learning the unreal way of doing c++, regardless if you're coming from blueprints or not.
+
+Another interesting source to check out is the official documentation page for <a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/ProgrammingWithCPP/IntroductionToCPP/" target="_blank">Introduction to C++ Programming in UE4<a>.
+
 
 ## Hot Reload
 If you are compiling your code, but your blueprint or in game behaviour does not seem to be updated to your newest code, this might be because of hot reloading.  
@@ -77,6 +92,8 @@ During compilation an unresolved external linker error might pop up, something t
 error LNK2019: unresolved external symbol "__declspec(dllimport) public: static class UClass * __cdecl UUserWidget::StaticClass(void)" (__imp_?StaticClass@UUserWidget@@SAPEAVUClass@@XZ) referenced in function "class UUserWidget * __cdecl NewObject<class UUserWidget>(class UObject *)" (??$NewObject@VUUserWidget@@@@YAPEAVUUserWidget@@PEAVUObject@@@Z)
 ```
 This error indicates that you are trying to access something that the linker is unable to find the symbols for.  
+
+#### Missing dependency
 The most common cause of this within unreal is missing a module dependency.
 
 In the case of the example error above, we can see that is complaining about something related to the `UUserWidget` class. So, we google for the <a href="https://docs.unrealengine.com/4.27/en-US/API/Runtime/UMG/Blueprint/UUserWidget/" target="_blank">documentation page of this class</a>, where we land on this:
@@ -89,7 +106,33 @@ To do this open your \<projectname\>.Build.cs file (normally found in the projec
 PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
 ```
 
+#### Type is not exported
 If this does not fix your issue, it might be that the class you are trying to use is not exported by it's module. You can check this by looking at its source code, if there is not `<MODULE>_API` in the class declaration, the class is not exported. Unfortunately there is no easy way to fix this, so maybe try looking for another solution to your problem.
+
+#### Missing function implementation
+A third option that could cause unresolved external errors is declaring a function in your header, but not declaring a function body for it.
+
+For example if you have this on your header:
+```cpp
+void Foo();
+```
+
+But it has not implementation in the matching `.cpp` file, this would cause an error.  
+To resolve this, simply declare the function body for it in your `.cpp`:
+```cpp
+UMyClass::Foo()
+{
+    // Code goes here
+}
+```
+
+In case of short functions or templated functions, it is also possible to define the function body direcly in your header as follows (although doing implementation in the `.cpp` is the preferred way of working):
+```cpp
+void Foo()
+{
+    // Code goes here
+}
+```
 
 ## Undefined Type
 During compilation of your project you could encounter an error mentioning use of undefined type, e.g.:
@@ -201,18 +244,3 @@ To disable unity build and be sure you always notice missing includes, you just 
 ```csharp
 bUseUnityBuild = false;
 ```
-
-
-## Learning Resources
-If you are just getting started with c++ and don't really have an idea what you are doing, it is probably a good idea to learn the basics of c++ first before diving into unreal code.
-
-If you are looking for a free resource about basic c++ check out <a href="https://www.learncpp.com/" target="_blank">learncpp.com</a>.
-
-For a more complete view, it might be more interesting to check out a few books, you can find a great listing of c++ books going from beginner to advanced <a href="https://stackoverflow.com/questions/388242/the-definitive-c-book-guide-and-list" target="_blank">here</a>.  
-Some of these books can be found on Google Books, other can be bought, found in your local library, or obtained in alternative ways.
-
-Once you are making the step to go over to unreal, it might be a good idea to play around with blueprints a bit to get more familiar with the API of the engine.  
-If you feel you are ready to take on c++ in Unreal Engine be sure to check out <a href="https://learn.unrealengine.com/course/3441566" target="_blank">this starter course</a>.
-Contrary to what this title suggests, this is useful for learning the unreal way of doing c++, regardless if you're coming from blueprints or not.
-
-Another interesting source to check out is the official documentation page for <a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/ProgrammingWithCPP/IntroductionToCPP/" target="_blank">Introduction to C++ Programming in UE4<a>.
