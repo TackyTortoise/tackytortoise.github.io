@@ -241,7 +241,14 @@ By default, unreal has a feature enabled that is called "unity build". This has 
 Unity build basically means that unreal packs a bunch of your files together in one compilation unit for improved compile times on large projects. However, for most projects, disabling this is actually faster.  
 Moreover, if unity build is enabled the compiler might actually hide errors regarding missing includes, since all these files are batched together, if you have an include in one file, they all "contain" it. When the unity build decides to change the batching up a bit this might give seemingly random sudden [undefined type](#undefined-type) errors.
 
-To disable unity build and be sure you always notice missing includes, you just have to set a simple setting in your \<projectname\>.Target.cs file (normally found in the project's `Source` folder):
+To disable unity build and be sure you always notice missing includes, you just have to set a simple setting in your \<projectname\>.Build.cs file (normally found in the project's `Source/<projectname>` folder):
+```csharp
+bUseUnity = false;
+```
+> Note: For engine versions older than 4.24, this setting is called `bFasterWithoutUnity`.
+
+Alternatively, you can set the following setting in your \<projectname\>.Target.cs file (normally found in the project's `Source` folder):
 ```csharp
 bUseUnityBuild = false;
 ```
+However, this second approach is not recommended for use with a source build of the engine, using the `.Build.cs` approach is always safe.
