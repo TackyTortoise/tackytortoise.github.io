@@ -8,15 +8,19 @@ As you might know if you got to this page, I am quite an active member on the <a
 Over time I noticed a lot of the same issues kept popping up, so I decided to write something down to save myself some typing time (hopefully).
 
 # Table of Contents
-1. [Learning Resources](#learning-resources)
-2. [Hot Reload](#hot-reload)
-3. [Access Violation](#access-violation)
-4. [Unresolved External](#unresolved-external)
-5. [Undefined Type](#undefined-type)
-6. [Garbage Collector Crash](#garbage-collector-crash)
-7. [Tick not being called](#tick-not-being-called)
-8. [Editor Symbols](#editor-symbols)
-9. [Unity Build](#unity-build)
+- [Learning Resources](#learning-resources)  
+- [Hot Reload](#hot-reload)  
+- [Generated Body](#generated-body)
+- [Error List](#error-list)
+- [Access Violation](#access-violation)  
+- [Unresolved External](#unresolved-external)  
+- [Undefined Type](#undefined-type)  
+- [Garbage Collector Crash](#garbage-collector-crash)  
+- [Tick not being called](#tick-not-being-called)  
+- [Basic Debugging](#basic-debugging)
+- [Editor Symbols](#editor-symbols)  
+- [Unity Build](#unity-build)  
+
 
 ## Learning Resources
 If you are just getting started with C++ and don't really have an idea what you are doing, it is probably a good idea to learn the basics of C++ first before diving into unreal code.
@@ -48,6 +52,36 @@ To avoid hot reloading, always close the editor before compiling (or just launch
 
 In short: <a href="http://hotreloadsucks.com" target="_blank">Hot Reload Sucks</a>.
 > NOTE: Live Coding is not the same thing as hot reloading, if you have Live Coding enabled, Hot Reload is automatically disabled.
+
+
+## Generated Body
+Some (outdated) tutorials will show you how to declare a class and use `GENERATED_UCLASS_BODY()` or `GENERATED_USTRUCT_BODY()`, these macros are deprecated and should no longer be used, instead prefer `GENERATED_BODY()`. It does pretty much the same as the 2 other macros. The main slight difference being that the old macros added a `public:` at the end and the new one doesn't, so you'll have to mark your functions/variables inside a public block yourself (which does make more sense).
+
+```cpp
+UCLASS()
+class COOLGAME_API UMyClass : public UObject
+{
+	GENERATED_BODY()
+
+public:
+    //...
+}
+```
+
+
+## Error List
+When writing code, there's a good chance that your code will not compile first try. You might be seeing a bunch of errors and be thinking "this all seems irrelevant to my code and/or junk information". There's a good chance you might be looking at the `Error List` of Visual Studio. The information in this window is quite unreliable and useless when working with unreal. Because all kinds of intellisense errors and other irrelevant junk will show up in here.
+
+{:refdef: style="text-align: center;"}
+![Editor symbols](/assets/commonissues/errorlist.png)
+{: refdef}
+
+Instead of basing your fixing efforts on this useless information, you might want to use the `Output` window instead. This accurately only shows relevant compiler errors (compiler errors are the only kind of errors you should care about by the way) together with the probable file and line number of the error. This window can normally be found on the same menu bar at the bottom of Visual Studio, or by going through the top menu `View > Output`, or by pressing *Alt + 2*
+
+{:refdef: style="text-align: center;"}
+![Editor symbols](/assets/commonissues/output.png)
+{: refdef}
+
 
 ## Access Violation
 At some point your program might crash and give you an error like the following:
@@ -85,6 +119,7 @@ PlayerController->SetViewTarget(this);
 This code will hit a breakpoint on the ensure if `PlayerController` is a nullptr in this case. But since you checked for this specifically, you quickly know something went wrong in getting the player controller specifically, instead of for example something going wrong inside the `SetViewTarget()`.
 
 **Always** fix the root cause of the access violation, don't add an if check and ignore the problem.
+
 
 ## Unresolved External
 During compilation an unresolved external linker error might pop up, something that looks like the following:
@@ -135,6 +170,7 @@ void Foo()
 }
 ```
 
+
 ## Undefined Type
 During compilation of your project you could encounter an error mentioning use of undefined type, e.g.:
 ```
@@ -162,6 +198,7 @@ class UUserWidget;
 This informs the compiler that `UUserWidget` is in fact a type, and as long as the size of it or the memory layout does not need to be known, this is enough.
 
 In most cases it suffices to do forward declaration in the header, and then when actualy using the property in your `.cpp` file, you add the include on top of that file instead of in the header.
+
 
 ## Garbage Collector Crash
 If you are encountering crashes at seemingly random times, it might be that you are encountering a garbage collection (GC) issue.  
@@ -201,6 +238,39 @@ void AMyActor::BeginPlay()
 	// Your code goes her
 }
 ```
+
+
+## Basic Debugging
+If you're running into a runtime issue that you can't immediately figure out, like an [access violation](#access-violation), it might be in your best interest to start a debugging session. Debugging allows you to place breakpoints, where the code execution will pause when executing that code. At this point you can look at the values for all the local and member variables that are in use at that moment. This is an easy way to see what is `nullptr` when dealing with an access violation for example.
+
+Before starting  to debug, it is very important to put the build configuration to **DebugGame Editor**. If put on Development Editor, code execution will jump all over the place and variables will be optimized away. 
+
+To do this, you first want to place a breakpoint around the suspected problematic code.  
+Go to the line where you want code execution to pause and click in the sidebar on the left of that code, so that a red dot appears on it.
+A shortcut for this is just selecting the line and pressing F9.
+
+{:refdef: style="text-align: center;"}
+![Editor symbols](/assets/commonissues/breakpoint.png)
+{: refdef}
+
+In the image above, the code will stop (a.k.a. break) when hitting the line where we call `PlayerController->SetViewTarget()`.  
+IMPORTANT: When hitting the breakpoint, this line has not been executed yet. So, if you break on an assignment line, the value will not be set until that line is executed, e.g. by stepping to the next line (F10) or by continuing to run (F5).
+
+To trigger the breakpoint, press F5 (or press "Local Windows Debugger" in the top bar) so that your code is compiled and the editor is launched with Visual Studio attached. You know VS is attached when at the bottom it shows an orange bar (red for VS2022).  
+Now run your game as you normally would, up to where the code with the breakpoint in would be executed.
+> NOTE: Close the editor before starting a debugging session. 
+
+Now that the breakpoint is hit, you can jump through the code line by line by pressing F10 and see what happens. If you want to step into a function, e.g., see the code of `SetViewTarget` in this case, you can press F11;
+
+You can inspect the values of variables by either hovering over them, or using the locals or auto tab (which is by default located on the bottom left). You will see the values in here change as you step through the code, this makes it a lot easier to spot potential issues.
+
+{:refdef: style="text-align: center;"}
+![Editor symbols](/assets/commonissues/locals.png)
+{: refdef}
+
+If you want to keep an eye on a specific variable during debugging, you can rightclick on it in code during debugging and click "Add Watch", this will pin this variable in the watch tab, which can be found in the same section as the Autos and Locals tab.
+
+Also see the <a href="https://docs.microsoft.com/en-us/visualstudio/debugger/getting-started-with-the-debugger-cpp?view=vs-2022" target="_blank">Microsoft C++ Debugging Guide</a>
 
 
 ## Editor Symbols
