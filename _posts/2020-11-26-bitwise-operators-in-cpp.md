@@ -14,8 +14,9 @@ Bitwise operators are operators that have an effect on bits in memory, most comm
 
 ## Types of Bitwise Operators
 
-There’s 6 different bitwise operators in c++ (&, |, ~, ^, << and >>), some of these might look similar but are not to be confused with the logical operators such as && or || which have very different results when used.
-The AND Operator (&)
+There’s 6 different bitwise operators in c++ (&, \|, ~, ^, << and >>), some of these might look similar but are not to be confused with the logical operators such as && or \|\| which have very different results when used.
+
+## The AND Operator (&)
 
 The & operator works in a similar way as the logical &&, but on a bit level instead of with booleans. Meaning if both of 2 numbers in the operation have that bit set to 1, the result will also have this bit set to one. A great usage of this is to check whether a number is even or by performing the x & 1 operation, if the result is 1 the number if odd, if the result is 0, the number is even.
 
@@ -25,10 +26,12 @@ A few examples with their binary breakdown:
 1 & 255 = 1
   00000001
 & 11111111
-= 00000001148 & 45 = 4
+= 0000000
+1148 & 45 = 4
   10010100
 & 00101101
-= 00000100157 & 150 = 148
+= 00000100
+157 & 150 = 148
   10011101
 & 10010110
 = 10010100
