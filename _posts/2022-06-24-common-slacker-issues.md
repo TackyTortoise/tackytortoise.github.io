@@ -31,7 +31,7 @@ For a more complete view, it might be more interesting to check out a few books,
 Some of these books can be found on Google Books, other can be bought, found in your local library, or obtained in alternative ways.
 
 Once you are making the step to go over to unreal, it might be a good idea to play around with blueprints a bit to get more familiar with the API of the engine.  
-If you feel you are ready to take on C++ in Unreal Engine be sure to check out <a href="https://learn.unrealengine.com/course/3441566" target="_blank">this starter course</a>.
+If you feel you are ready to take on C++ in Unreal Engine be sure to check out <a href="https://dev.epicgames.com/community/learning/courses/KJ/converting-blueprint-to-c/" target="_blank">this starter course</a>.
 Contrary to what this title suggests, this is useful for learning the unreal way of doing C++, regardless if you're coming from blueprints or not.
 
 Another interesting source to check out is the official documentation page for <a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/ProgrammingWithCPP/IntroductionToCPP/" target="_blank">Introduction to C++ Programming in UE4<a>.
