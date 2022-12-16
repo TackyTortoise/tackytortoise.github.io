@@ -82,6 +82,7 @@ Instead of basing your fixing efforts on this useless information, you might wan
 ![Editor symbols](/assets/commonissues/output.png)
 {: refdef}
 
+Even the official documentation of unreal's visual studio setup recommends turning off the error list, <a href="https://docs.unrealengine.com/5.1/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/#turnofftheerrorlistwindow" target="_blank"> see documentation here</a>.
 
 ## Access Violation
 At some point your program might crash and give you an error like the following:
