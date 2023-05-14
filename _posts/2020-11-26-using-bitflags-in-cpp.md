@@ -26,7 +26,7 @@ enum class EFlagValue
     Flag5 = 1 << 4, // 16
     Flag6 = 1 << 5, // 32
     Flag7 = 1 << 6, // 64
-    Flag8 = 1 << 7  //128
+    Flag8 = 1 << 7  // 128
 };
 {% endhighlight %}
 
@@ -44,7 +44,7 @@ struct BitFlag
 
 ### Setting a Flag
 
-To set a flag to a “true” value we want to make the bit become 1, not matter what the previous value was. This is very easy to achieve with the \| operator, since you’re sure the flag is set on the input value (which is the actual flag) a bitwise or operation would always result in this bit set to 1, since it is 1 in the input.
+To set a flag to a “true” value we want to make the bit become 1, no matter what the previous value was. This is very easy to achieve with the \| operator, since you’re sure the flag is set on the input value (which is the actual flag) a bitwise or operation would always result in this bit set to 1, since it is 1 in the input.
 
 A quick visualization of this would work on the bits of our current situation if we wanted to set Flag3:
 
