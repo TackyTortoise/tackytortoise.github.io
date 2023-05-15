@@ -6,7 +6,7 @@ date:   2020-11-26 22:50:00 +0200
 
 # What Are Bitwise Operators
 
-Bitwise operators are operators that have an effect on bits in memory, most commonly used with numbers, such as integers. An unsigned 8 bit integer for example is stored in memory as a row of bits e.g. 0 is represented in memory as 00000000, 255 would be 11111111 and 123 would be 01000101. To represent a number in binary, you start from the right hand side and go towards the left, every step to the left signifies a 1^(n + 1) value for that bit, where n equals the amount of steps taken towards the left. Bitwise operators can have an effect on the level of an individual bit. A common use case for these operators is working with bitflags.
+Bitwise operators are operators that have an effect on bits in memory, most commonly used with numbers, such as integers. An unsigned 8 bit integer for example is stored in memory as a row of bits e.g. 0 is represented in memory as 00000000, 255 would be 11111111 and 123 would be 01000101. To represent a number in binary, you start from the right hand side and go towards the left, every step to the left signifies a 2^n value for that bit, where n equals the amount of steps taken towards the left. Bitwise operators can have an effect on the level of an individual bit. A common use case for these operators is working with bitflags.
 
 {:refdef: style="text-align: center;"}
 ![Binary representation of 69](/assets/binaryexample.png)
@@ -18,7 +18,7 @@ There’s 6 different bitwise operators in c++ (&, \|, ~, ^, << and >>), some of
 
 ## The AND Operator (&)
 
-The & operator works in a similar way as the logical &&, but on a bit level instead of with booleans. Meaning if both of 2 numbers in the operation have that bit set to 1, the result will also have this bit set to one. A great usage of this is to check whether a number is even or by performing the x & 1 operation, if the result is 1 the number if odd, if the result is 0, the number is even.
+The & operator works in a similar way as the logical &&, but on a bit level instead of with booleans. Meaning if both of 2 numbers in the operation have that bit set to 1, the result will also have this bit set to one. A great usage of this is to check whether a number is even or by performing the x & 1 operation, if the result is 1 the number is odd, if the result is 0, the number is even.
 
 A few examples with their binary breakdown:
 
@@ -26,8 +26,8 @@ A few examples with their binary breakdown:
 1 & 255 = 1
   00000001
 & 11111111
-= 0000000
-1148 & 45 = 4
+= 0000001
+148 & 45 = 4
   10010100
 & 00101101
 = 00000100
@@ -47,10 +47,12 @@ A few examples:
 1 | 255 = 255
   00000001
 | 11111111
-= 11111111148 | 45 = 189
+= 11111111
+148 | 45 = 189
   10010100
 | 00101101
-= 10111101157 | 150 = 159
+= 10111101
+157 | 150 = 159
   10011101
 | 10010110
 = 10011111
@@ -66,10 +68,12 @@ A few examples:
 1 ^ 255 = 254
   00000001
 | 11111111
-= 11111110148 ^ 45 = 185
+= 11111110
+148 ^ 45 = 185
   10010100
 | 00101101
-= 10111001157 & 150 = 11
+= 10111001
+157 & 150 = 11
   10011101
 | 10010110
 = 00001011
@@ -84,9 +88,11 @@ A few examples:
 ```
 ~1 = 254
 ~ 00000001
-= 11111110~148 = 107
+= 11111110
+~148 = 107
 ~ 10010100
-= 01101011~157 = 98
+= 01101011
+~157 = 98
 ~ 10011101
 = 01100010
 ```
@@ -101,9 +107,11 @@ A few examples:
 ```
 1 << 2 = 4
 ~ 00000001
-= 00000100148 >> 3 = 18
+= 00000100
+148 >> 3 = 18
 ~ 10010100
-= 00010010157 << 7 = 128
+= 00010010
+157 << 7 = 128
 ~ 10011101
 = 10000000
 ```
